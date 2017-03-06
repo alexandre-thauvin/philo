@@ -5,68 +5,67 @@
 ## Login   <thauvi_a@epitech.net>
 ##
 ## Started on  Mon Mar  6 10:57:30 2017 Alexandre Thauvin
-## Last update Mon Mar  6 23:01:42 2017 Paul THEIS
+## Last update Mon Mar  6 23:06:03 2017 Paul THEIS
 ##
 
+DEBUG			=		yes
 
-DEBUG		=	yes
+VERSION		=		0.1
 
-VERSION		=	0.1
+NAME			=		philo
 
-NAME		=	philo
+SRCS			=		main.c
 
-SRCS		=	main.c
-
-CC		=	gcc
-AR		=	ar
-RM		=	rm -Rf
+CC				=		gcc
+AR				=		ar
+RM				=		rm -Rf
 
 ifeq ($(DEBUG), yes)
-CFLAGS          =	-W -Wall -Wextra -g -pg
+CFLAGS		=		-W -Wall -Wextra -g -pg
 else
-CFLAGS          =	-W -Wall -Wextra -Werror
+CFLAGS		=		-W -Wall -Wextra -Werror
 endif
 CFLAGS	 	+=	-I./include
-LDFLAGS	= -lpthread -ldl #libriceferee.so
+LDFLAGS		=		-lpthread -ldl #libriceferee.so
 
-GREEN		=	\033[1;32m
-YELLOW		=	\033[1;33m
-BLUE		=	\033[1;34m
-WHITE		=	\033[0m
+GREEN			=		\033[1;32m
+YELLOW		=		\033[1;33m
+BLUE			=		\033[1;34m
+WHITE			=		\033[0m
 
-OBJDIR		=	obj
-SRCDIR		=	src
-SRCDIRS		=	$(shell find $(SRCDIR) -type d | sed 's/$(SRCDIR)/./g' )
-OBJS		=	$(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, \
-				$(addprefix $(SRCDIR)/, $(SRCS)))
+OBJDIR		=		obj
+SRCDIR		=		src
+SRCDIRS		=		$(shell find $(SRCDIR) -type d | sed 's/$(SRCDIR)/./g' )
+OBJS			=		$(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, \
+							$(addprefix $(SRCDIR)/, $(SRCS)))
 
-name		:	buildrepo project_compil
+name			:		buildrepo project_compil
 
 project_compil	:	$(OBJS)
 				@$(CC) $(OBJS) -o $(NAME) $(LDFLAGS)
 				@echo "$(GREEN)\n<--->\t ♩♪♫ $(NAME) $(YELLOW)" \
 				" Compiled Sucesfully $(WHITE)\n"
 
-all		:	name
+all				:		name
 
-clean		:
-				$(RM) $(OBJDIR)
+clean			:
+							$(RM) $(OBJDIR)
 
-fclean		:	clean
-				$(RM) $(NAME) $(LIBDIR)
+fclean		:		clean
+							$(RM) $(NAME) $(LIBDIR)
 
-re		:	fclean all
+re				:		fclean all
 
-val		:
-				@make re && valgrind ./$(NAME)
+val				:
+							@make re && valgrind ./$(NAME)
 
-val+		:
-				@make re && valgrind --leak-check=full ./$(NAME)
+val+			:
+							@make re && valgrind --leak-check=full ./$(NAME)
 
-exe		:
-				@make re && ./$(NAME) -p 7 -e 15
+exe				:
+							@make re && ./$(NAME) -p 7 -e 15
 
-.PHONY		:	all clean fclean re
+.PHONY		:		all clean fclean re
 
 $(OBJDIR)/%.o	: 	$(SRCDIR)/%.c
 				@$(CC) -c $< -o $@ $(CFLAGS)
@@ -77,11 +76,11 @@ $(OBJDIR)/$(BASICDIR)/%.o: $(BASICDIR)/%.c
 				@echo "$(YELLOW)<LIB> \t [√] $<\t$(WHITE)"
 
 buildrepo	:
-				@$(call make-repo)
-				@echo "$(GREEN)\n<--->\t ♩♪♫ $(NAME) $(YELLOW)" \
-				" Repository Init $(WHITE)\n"
+							@$(call make-repo)
+							@echo "$(GREEN)\n<--->\t ♩♪♫ $(NAME) $(YELLOW)" \
+							" Repository Init $(WHITE)\n"
 print-%		:
-				@echo '$*=$($*)'
+							@echo '$*=$($*)'
 
 define make-repo
 				for dir in $(SRCDIRS); \
