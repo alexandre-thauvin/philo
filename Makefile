@@ -1,11 +1,11 @@
 ##
-## Makefile for  in /home/thauvi_a/rendu/tek2/PSU_2016_philo
+## Makefile for  in /home/aneopsy/PSU_2016_philo/
 ##
-## Made by Alexandre Thauvin
-## Login   <thauvi_a@epitech.net>
+## Made by Paul THEIS
+## Login   <theis_p@epitech.eu>
 ##
-## Started on  Mon Mar  6 10:57:30 2017 Alexandre Thauvin
-## Last update Mon Mar  6 23:35:17 2017 Paul THEIS
+## Started on  Mon Mar  6 23:55:28 2017 Paul THEIS
+## Last update Mon Mar  6 23:55:30 2017 Paul THEIS
 ##
 
 DEBUG			=		yes
