@@ -5,7 +5,7 @@
 ** Login   <thauvi_a@epitech.net>
 **
 ** Started on  Mon Mar  6 10:55:43 2017 Alexandre Thauvin
-** Last update Mon Mar  6 23:54:11 2017 Paul THEIS
+** Last update Tue Mar  7 00:02:07 2017 Paul THEIS
 */
 
 #include <stdio.h>
@@ -20,7 +20,7 @@
 void		print_philo(t_philo philo)
 {
   printf("#----- PHILO -----#\n");
-  printf("Thread: %p\n", philo.thread);
+  printf("Thread: %ld\n", philo.thread);
   printf("end: %p\n", philo.end);
   printf("chopstick: %d\n", philo.chopstick);
   printf("Right: %p\n", philo.right);
