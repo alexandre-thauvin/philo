@@ -5,7 +5,7 @@
 ** Login   <thauvi_a@epitech.net>
 **
 ** Started on  Mon Mar  6 10:55:43 2017 Alexandre Thauvin
-** Last update Mon Mar  6 22:54:02 2017 Paul THEIS
+** Last update Mon Mar  6 23:54:11 2017 Paul THEIS
 */
 
 #include <stdio.h>
@@ -13,45 +13,64 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dlfcn.h>
+
 #include "philo.h"
 #include "extern.h"
 
-int	(*aRCFStartup)(int ac, char **av);
+void		print_philo(t_philo philo)
+{
+  printf("#----- PHILO -----#\n");
+  printf("Thread: %p\n", philo.thread);
+  printf("end: %p\n", philo.end);
+  printf("chopstick: %d\n", philo.chopstick);
+  printf("Right: %p\n", philo.right);
+  printf("State: %d\n", philo.state);
+  printf("nbEat: %d\n", philo.nbEat);
+  printf("id: %d\n", philo.id);
+  printf("#-----------------#\n");
+}
+
+int		philo(int nbPhilo, int nbEat)
+{
+  int 		i;
+  t_philo 	philos[nbPhilo];
+  int  		end;
+
+  i = -1;
+  end = 0;
+  while (++i < nbPhilo)
+    {
+      philos[i].right = (i == nbPhilo - 1) ? (&philos[0]) : (&philos[i + 1]);
+      philos[i].state = REST;
+      philos[i].nbEat = nbEat;
+      philos[i].chopstick = true;
+      philos[i].id = i;
+      philos[i].end = &end;
+      print_philo(philos[i]);
+    }
+  i = 0;
+  return (0);
+}
 
 int			main(int ac, char **av)
 {
-  unsigned int		philo;
-  unsigned int		chopstick;
+  int			nbPhilo;
+  int			nbChopstick;
+  int			i;
 
-  if (ac != 5)
+  i = 0;
+  RCFStartup(ac, av);
+  while (i < ac)
     {
-      printf("Usage : philo -p N -e N");
-      return (1);
+      if (strcmp(av[i], "-p") == 0 && i + 1 < ac)
+        nbPhilo = atoi(av[i + 1]);
+      if (strcmp(av[i], "-e") == 0 && i + 1 < ac)
+        nbChopstick = atoi(av[i + 1]);
+      ++i;
     }
-  if (strcmp("-p", av[1]))
-  {
-    philo = atoi(av[2]);
-    chopstick = atoi(av[4]);
-  }
-  else
-  {
-    philo = atoi(av[4]);
-    chopstick = atoi(av[2]);
-  }
-  if (philo < 1 || chopstick < 2)
-  {
-    printf("Usage : philo -p N -e N");
-    return (1);
-  }
-  void* lib=dlopen("./libriceferee.so",RTLD_LAZY);
-
-if (!lib) {
-  fprintf(stderr, "Couldn't open libriceferee.so: %s\n",
-          dlerror());
-  exit(1);
-}
-  // aRCFStartup=dlsym(lib,"RCFStartup");
-  // RCFStartup(ac, av);
-  // RCFCleanup();
-  return (1);
+  if (nbPhilo < 1 || nbChopstick < 2)
+    return (printf("Usage : philo -p N -e N"), 1);
+  philo(nbPhilo, nbChopstick);
+  RCFCleanup();
+  return (0);
 }
