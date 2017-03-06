@@ -5,17 +5,23 @@
 ** Login   <thauvi_a@epitech.net>
 **
 ** Started on  Mon Mar  6 10:55:43 2017 Alexandre Thauvin
-** Last update Mon Mar  6 11:11:31 2017 Alexandre Thauvin
+** Last update Mon Mar  6 22:54:02 2017 Paul THEIS
 */
 
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <string.h>
+#include <dlfcn.h>
 #include "philo.h"
 #include "extern.h"
 
-int	main(int ac, char **av)
+int	(*aRCFStartup)(int ac, char **av);
+
+int			main(int ac, char **av)
 {
-  unsigned int	philo;
-  unsigned int	chopstick;
+  unsigned int		philo;
+  unsigned int		chopstick;
 
   if (ac != 5)
     {
@@ -33,10 +39,19 @@ int	main(int ac, char **av)
     chopstick = atoi(av[2]);
   }
   if (philo < 1 || chopstick < 2)
-        printf("Usage : philo -p N -e N");
-        return (1);
+  {
+    printf("Usage : philo -p N -e N");
+    return (1);
   }
-  RCFStartup(ac, av);
-  RCFCleanup();
+  void* lib=dlopen("./libriceferee.so",RTLD_LAZY);
+
+if (!lib) {
+  fprintf(stderr, "Couldn't open libriceferee.so: %s\n",
+          dlerror());
+  exit(1);
+}
+  // aRCFStartup=dlsym(lib,"RCFStartup");
+  // RCFStartup(ac, av);
+  // RCFCleanup();
   return (1);
 }

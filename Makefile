@@ -5,37 +5,87 @@
 ## Login   <thauvi_a@epitech.net>
 ##
 ## Started on  Mon Mar  6 10:57:30 2017 Alexandre Thauvin
-## Last update Mon Mar  6 11:01:17 2017 Alexandre Thauvin
+## Last update Mon Mar  6 23:01:42 2017 Paul THEIS
 ##
 
-NAME		= philo
 
-SRCS		= main.c
+DEBUG		=	yes
 
-OBJS		= $(SRCS:.c=.o)
+VERSION		=	0.1
 
-GCC		= gcc
+NAME		=	philo
 
-RM		= rm -rf
+SRCS		=	main.c
 
-CFLAGS	= -Wall -Werror -W -Wextra
+CC		=	gcc
+AR		=	ar
+RM		=	rm -Rf
 
-LDFLAGS	= libriceferee.so -lpthread
+ifeq ($(DEBUG), yes)
+CFLAGS          =	-W -Wall -Wextra -g -pg
+else
+CFLAGS          =	-W -Wall -Wextra -Werror
+endif
+CFLAGS	 	+=	-I./include
+LDFLAGS	= -lpthread -ldl #libriceferee.so
 
+GREEN		=	\033[1;32m
+YELLOW		=	\033[1;33m
+BLUE		=	\033[1;34m
+WHITE		=	\033[0m
 
-$(NAME): $(OBJS)
-	$(GCC) $(OBJS) -o $(NAME) $(LDFLAGS) $(CFLAGS)
+OBJDIR		=	obj
+SRCDIR		=	src
+SRCDIRS		=	$(shell find $(SRCDIR) -type d | sed 's/$(SRCDIR)/./g' )
+OBJS		=	$(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, \
+				$(addprefix $(SRCDIR)/, $(SRCS)))
 
-all: $(NAME)
+name		:	buildrepo project_compil
 
-clean:
-	$(RM) $(OBJS)
-	$(RM) sources/*~
-	$(RM) sources/*#
+project_compil	:	$(OBJS)
+				@$(CC) $(OBJS) -o $(NAME) $(LDFLAGS)
+				@echo "$(GREEN)\n<--->\t ♩♪♫ $(NAME) $(YELLOW)" \
+				" Compiled Sucesfully $(WHITE)\n"
 
-fclean: clean
-	$(RM) $(NAME)
+all		:	name
 
-re: fclean all
+clean		:
+				$(RM) $(OBJDIR)
 
-.PHONY:         all clean fclean re
+fclean		:	clean
+				$(RM) $(NAME) $(LIBDIR)
+
+re		:	fclean all
+
+val		:
+				@make re && valgrind ./$(NAME)
+
+val+		:
+				@make re && valgrind --leak-check=full ./$(NAME)
+
+exe		:
+				@make re && ./$(NAME) -p 7 -e 15
+
+.PHONY		:	all clean fclean re
+
+$(OBJDIR)/%.o	: 	$(SRCDIR)/%.c
+				@$(CC) -c $< -o $@ $(CFLAGS)
+				@echo "$(BLUE)<SRC> \t [√] $<\t$(WHITE)"
+
+$(OBJDIR)/$(BASICDIR)/%.o: $(BASICDIR)/%.c
+				@$(CC) -c $< -o $@ $(CFLAGS)
+				@echo "$(YELLOW)<LIB> \t [√] $<\t$(WHITE)"
+
+buildrepo	:
+				@$(call make-repo)
+				@echo "$(GREEN)\n<--->\t ♩♪♫ $(NAME) $(YELLOW)" \
+				" Repository Init $(WHITE)\n"
+print-%		:
+				@echo '$*=$($*)'
+
+define make-repo
+				for dir in $(SRCDIRS); \
+				do \
+				mkdir -p $(OBJDIR)/$$dir; \
+					done
+endef
