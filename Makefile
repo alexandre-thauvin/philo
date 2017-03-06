@@ -1,16 +1,16 @@
 ##
-## Makefile for  in /home/thauvi_a/rendu/tek2/trade
+## Makefile for  in /home/thauvi_a/rendu/tek2/PSU_2016_philo
 ##
 ## Made by Alexandre Thauvin
 ## Login   <thauvi_a@epitech.net>
 ##
-## Started on  Mon Feb 27 11:44:29 2017 Alexandre Thauvin
-## Last update Mon Mar  6 10:29:09 2017 Alexandre Thauvin
+## Started on  Mon Mar  6 10:57:30 2017 Alexandre Thauvin
+## Last update Mon Mar  6 11:01:17 2017 Alexandre Thauvin
 ##
 
-NAME		= trade
+NAME		= philo
 
-SRCS		=
+SRCS		= main.c
 
 OBJS		= $(SRCS:.c=.o)
 
@@ -18,11 +18,13 @@ GCC		= gcc
 
 RM		= rm -rf
 
-CXXFLAGS	= -Wall -Werror -W -Wextra
+CFLAGS	= -Wall -Werror -W -Wextra
+
+LDFLAGS	= -lpthread
 
 
 $(NAME): $(OBJS)
-	$(GCC) $(OBJS) -o $(NAME) $(CXXFLAGS)
+	$(GCC) $(OBJS) -o $(NAME) $(LDFLAGS) $(CFLAGS)
 
 all: $(NAME)
 
