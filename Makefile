@@ -20,7 +20,7 @@ RM		= rm -rf
 
 CFLAGS	= -Wall -Werror -W -Wextra
 
-LDFLAGS	= -lpthread
+LDFLAGS	= libriceferee.so -lpthread
 
 
 $(NAME): $(OBJS)
