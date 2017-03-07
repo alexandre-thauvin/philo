@@ -5,3 +5,4 @@ Supprimerait cmake-build-debug/CMakeFiles/PSU_2016_philo.dir/src/
 .idea
 CMakeLists.txt
 cmake-build-debug
+obj/
