@@ -63,6 +63,7 @@ val+			:
 							@make re && valgrind --leak-check=full ./$(NAME)
 
 exe				:
+							export LD_LIBRARY_PATH=$(pwd)
 							@make re && LD_PRELOAD=libriceferee.so ./$(NAME) -p 7 -e 15
 
 .PHONY		:		all clean fclean re
