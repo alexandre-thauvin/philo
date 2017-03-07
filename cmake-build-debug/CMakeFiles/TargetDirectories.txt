@@ -1,3 +1,0 @@
-/home/aneopsy/PSU_2016_philo/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/aneopsy/PSU_2016_philo/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/aneopsy/PSU_2016_philo/cmake-build-debug/CMakeFiles/PSU_2016_philo.dir
