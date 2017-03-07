@@ -40,7 +40,7 @@ static void     *print_philo (void *phil)
   printf("+-------------------------------+\n");
   printf("| Thread: \t%-16ld|\n", philo->thread);
   printf("| end: \t\t%-16p|\n", philo->end);
-  printf("| chopstick: \t%-16d|\n", (philo->chopstick) ? 1 : 0);
+  printf("| chopstick: \t%-16s|\n", (philo->chopstick) ? "true" : "false");
   printf("| Right: \t%-16p|\n", philo->right);
   printf("| State: \t%-16d|\n", philo->state);
   printf("| count: \t%-16d|\n", philo->count);
