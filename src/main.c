@@ -46,6 +46,8 @@ static void     *print_philo (void *phil)
   printf("| count: \t%-16d|\n", philo->count);
   printf("| id: \t\t%-16d|\n", philo->id);
   printf("+-------------------------------+\n");
+  printf("| addr: \t%-16p|\n", philo);
+  printf("+-------------------------------+\n");
   usleep(10);
   pthread_exit(NULL);
   return (NULL);
@@ -68,7 +70,7 @@ int		philo(int nbPhilo, int nbEat)
       philos[i].chopstick = true;
       philos[i].id = i;
       philos[i].end = &end;
-      // print_philo(&philos[i]);
+//       print_philo(&philos[i]);
       pthread_mutex_init(&philos[i].mutex, NULL);
       if (pthread_create(&philos[i].thread, NULL, print_philo, &philos[i]))
     {
