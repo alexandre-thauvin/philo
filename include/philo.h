@@ -15,7 +15,7 @@ typedef struct		s_philo
   pthread_t		thread;
   int			*end;
   pthread_mutex_t	mutex;
-  bool		chopstick;
+  bool			chopstick;
   struct s_philo	*right;
   enum STATE		state;
   int			nbEat;

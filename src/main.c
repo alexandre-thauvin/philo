@@ -5,7 +5,7 @@
 ** Login   <thauvi_a@epitech.net>
 **
 ** Started on  Mon Mar  6 10:55:43 2017 Alexandre Thauvin
-** Last update Tue Mar  7 00:02:07 2017 Paul THEIS
+** Last update Tue Mar  7 17:42:27 2017 Paul THEIS
 */
 
 #include <stdio.h>
@@ -17,17 +17,29 @@
 #include "philo.h"
 #include "extern.h"
 
-void		print_philo(t_philo philo)
+pthread_mutex_t mutex_stock;
+
+static void * print_philo (void * phil)
 {
+  t_philo	*philo;
+
+  while (1)
+  {
+  pthread_mutex_lock(&mutex_stock);
+  philo = phil;
   printf("#----- PHILO -----#\n");
-  printf("Thread: %ld\n", philo.thread);
-  printf("end: %p\n", philo.end);
-  printf("chopstick: %d\n", philo.chopstick);
-  printf("Right: %p\n", philo.right);
-  printf("State: %d\n", philo.state);
-  printf("nbEat: %d\n", philo.nbEat);
-  printf("id: %d\n", philo.id);
+  printf("Thread: %ld\n", philo->thread);
+  printf("end: %p\n", philo->end);
+  printf("chopstick: %d\n", philo->chopstick);
+  printf("Right: %p\n", philo->right);
+  printf("State: %d\n", philo->state);
+  printf("nbEat: %d\n", philo->nbEat);
+  printf("id: %d\n", philo->id);
   printf("#-----------------#\n");
+  pthread_mutex_unlock(&mutex_stock);
+      }
+  pthread_exit(NULL);
+  return (NULL);
 }
 
 int		philo(int nbPhilo, int nbEat)
@@ -46,8 +58,12 @@ int		philo(int nbPhilo, int nbEat)
       philos[i].chopstick = true;
       philos[i].id = i;
       philos[i].end = &end;
-      print_philo(philos[i]);
-    }
+      if (pthread_create(&philos[i].thread, NULL, print_philo, &philos[i]))
+	{
+	  fprintf(stderr,"Error - pthread_create() return code: %d\n", -1);
+	  exit(EXIT_FAILURE);
+	}
+  }
   i = 0;
   return (0);
 }
