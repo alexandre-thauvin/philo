@@ -8,7 +8,9 @@
 #include <pthread.h>
 #include <stdbool.h>
 
-enum STATE { REST, EAT, THINK };
+enum STATE {REST,
+            EAT,
+            THINK};
 
 typedef struct		s_philo
 {

@@ -19,6 +19,7 @@
 #include "../include/extern.h"
 
 pthread_barrier_t mutex_stock;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 static void     *print_philo (void *phil)
 {
@@ -26,7 +27,9 @@ static void     *print_philo (void *phil)
   int		    s;
 
   philo = (t_philo *)phil;
+  // Attendre que les nbPhilo soit là avant de continuer.
   s = pthread_barrier_wait(&mutex_stock);
+  pthread_mutex_lock(&mutex);
   if(s == 0) {
     printf("Thread %ld passed barrier %d: return value was 0\n", philo->thread, philo->id);
   } else if (s == PTHREAD_BARRIER_SERIAL_THREAD) {
@@ -49,19 +52,23 @@ static void     *print_philo (void *phil)
   printf("| addr: \t%-16p|\n", philo);
   printf("+-------------------------------+\n");
   usleep(10);
+  pthread_mutex_unlock(&mutex);
   pthread_exit(NULL);
+  lphilo_eat();
   return (NULL);
 }
 
-int		philo(int nbPhilo, int nbEat)
+int		    philo(int nbPhilo, int nbEat)
 {
   int 		i;
-  t_philo 	philos[nbPhilo];
   int  		end;
+  t_philo 	philos[nbPhilo];
 
   i = -1;
   end = 0;
+  // Initialisation de la barriere a nbPhilo de philo.
   pthread_barrier_init(&mutex_stock, NULL, nbPhilo);
+  // Boucle permettant de creer tous les philo.
   while (++i < nbPhilo)
     {
       philos[i].right = (i == nbPhilo - 1) ? (&philos[0]) : (&philos[i + 1]);
@@ -70,21 +77,19 @@ int		philo(int nbPhilo, int nbEat)
       philos[i].chopstick = true;
       philos[i].id = i;
       philos[i].end = &end;
-//       print_philo(&philos[i]);
-      pthread_mutex_init(&philos[i].mutex, NULL);
+      pthread_mutex_init(&philos[i].mutex, NULL); //PTHREAD_MUTEX_INITIALIZER;
       if (pthread_create(&philos[i].thread, NULL, print_philo, &philos[i]))
-    {
-      fprintf(stderr,"Error - pthread_create() return code: %d\n", -1);
-      exit(EXIT_FAILURE);
-    }
+        return (fprintf(stderr,"Error - pthread_create() return code: %d\n", -1), 1);
   }
+  // La boucle qui suit permet d'attendre la fin de tous les threads.
   i = 0;
   while (i < nbPhilo)
-    pthread_join(philos[i++].thread, NULL);
+    if (pthread_join(philos[i++].thread, NULL))
+      return (fprintf(stderr, "Error - pthread_join()\n"), 1);
   return (0);
 }
 
-int			main(int ac, char **av)
+int			    main(int ac, char **av)
 {
   int			nbPhilo;
   int			nbChopstick;
