@@ -92,13 +92,11 @@ int		    philo(int nbPhilo, int nbEat)
 int			    main(int ac, char **av)
 {
   int           c;
-  int           errflg;
   int			nbPhilo;
   int			nbChopstick;
   extern char   *optarg;
   extern int    optind;
 
-  errflg = 0;
   RCFStartup(ac, av);
   optind = 0;
   while ((c = getopt(ac, av, "p:e:")) != -1)
@@ -107,16 +105,10 @@ int			    main(int ac, char **av)
       nbPhilo = atoi(optarg);
     else if (c == 'e')
       nbChopstick = atoi(optarg);
-    else if (c == ':')
-      fprintf(stderr, "Option -%c requires an operand: %d\n", optopt, ++errflg);
-    else if (c == '?')
-        fprintf(stderr, "Unrecognized option: -%c: %d\n", optopt, ++errflg);
+    else
+      return (fprintf(stderr, "Usage : philo -p N -e N"), 1);
+
   }
-  if (errflg) {
-    fprintf(stderr, "Usage : philo -p N -e N");
-    exit(2);
-  }
-  printf("%d : %d\n", nbPhilo, nbChopstick);
   philo(nbPhilo, nbChopstick);
   RCFCleanup();
   return (0);
