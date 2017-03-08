@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "philo.h"
 #include "extern.h"
@@ -27,7 +28,6 @@ static void     *print_philo (void *phil)
   int		    s;
 
   philo = (t_philo *)phil;
-  // Attendre que les nbPhilo soit là avant de continuer.
   s = pthread_barrier_wait(&mutex_stock);
   pthread_mutex_lock(&mutex);
   if(s == 0) {
@@ -42,19 +42,20 @@ static void     *print_philo (void *phil)
   printf("| PHILO \t%-16d|\n", philo->id);
   printf("+-------------------------------+\n");
   printf("| Thread: \t%-16ld|\n", philo->thread);
-  printf("| end: \t\t%-16p|\n", philo->end);
+  printf("| end: \t\t%-16p|\n", (void*)philo->end);
   printf("| chopstick: \t%-16s|\n", (philo->chopstick) ? "true" : "false");
-  printf("| Right: \t%-16p|\n", philo->right);
+  printf("| Right: \t%-16p|\n", (void *)philo->right);
   printf("| State: \t%-16d|\n", philo->state);
   printf("| count: \t%-16d|\n", philo->count);
   printf("| id: \t\t%-16d|\n", philo->id);
   printf("+-------------------------------+\n");
-  printf("| addr: \t%-16p|\n", philo);
+  printf("| addr: \t%-16p|\n", (void *)philo);
   printf("+-------------------------------+\n");
-  usleep(10);
+//  lphilo_eat();
+//  lphilo_think();
+//  lphilo_sleep();
   pthread_mutex_unlock(&mutex);
   pthread_exit(NULL);
-  lphilo_eat();
   return (NULL);
 }
 
@@ -66,9 +67,7 @@ int		    philo(int nbPhilo, int nbEat)
 
   i = -1;
   end = 0;
-  // Initialisation de la barriere a nbPhilo de philo.
   pthread_barrier_init(&mutex_stock, NULL, nbPhilo);
-  // Boucle permettant de creer tous les philo.
   while (++i < nbPhilo)
     {
       philos[i].right = (i == nbPhilo - 1) ? (&philos[0]) : (&philos[i + 1]);
@@ -81,7 +80,6 @@ int		    philo(int nbPhilo, int nbEat)
       if (pthread_create(&philos[i].thread, NULL, print_philo, &philos[i]))
         return (fprintf(stderr,"Error - pthread_create() return code: %d\n", -1), 1);
   }
-  // La boucle qui suit permet d'attendre la fin de tous les threads.
   i = 0;
   while (i < nbPhilo)
     if (pthread_join(philos[i++].thread, NULL))
@@ -97,8 +95,9 @@ int			    main(int ac, char **av)
   extern char   *optarg;
   extern int    optind;
 
-  RCFStartup(ac, av);
   optind = 0;
+  nbChopstick = 0;
+  nbPhilo = 0;
   while ((c = getopt(ac, av, "p:e:")) != -1)
   {
     if (c == 'p')
@@ -106,9 +105,11 @@ int			    main(int ac, char **av)
     else if (c == 'e')
       nbChopstick = atoi(optarg);
     else
-      return (fprintf(stderr, "Usage : philo -p N -e N"), 1);
-
+      return (fprintf(stderr, "Usage : philo -p N -e N\n"), 1);
   }
+  if (nbChopstick <= 0 && nbPhilo <= 0)
+    return (fprintf(stderr, "Usage : philo -p N -e N\n"), 1);
+  RCFStartup(ac, av);
   philo(nbPhilo, nbChopstick);
   RCFCleanup();
   return (0);

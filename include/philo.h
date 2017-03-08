@@ -1,6 +1,6 @@
-//
-// created by thauvi_a
-//
+/*
+ *
+ */
 
 #ifndef PHILO_H_
 # define PHILO_H_

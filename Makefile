@@ -21,9 +21,9 @@ AR				=		ar
 RM				=		rm -Rf
 
 ifeq ($(DEBUG), yes)
-CFLAGS		=		-W -Wall -Wextra -g -pg
+CFLAGS		=		-W -Wall -Wextra -g -pg -pedantic
 else
-CFLAGS		=		-W -Wall -Wextra -Werror
+CFLAGS		=		-W -Wall -Wextra -Werror -pedantic
 endif
 CFLAGS	 	+=	-I./include
 LIB				=		libriceferee.so -lpthread
