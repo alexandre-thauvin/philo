@@ -21,13 +21,35 @@
 pthread_barrier_t mutex_stock;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
+void choice(t_philo *philo)
+{
+  //on reçoit direct le philo
+  //à remplacer plus tard par un void* name(void *) vu qu'on l'appellera direct lors du pthread_create
+//  t_philo *philo;
+
+  //philo = (t_philo *)arg;
+  pthread_barrier_wait(&mutex_stock);
+  while (philo->count > 0)
+    {
+      usleep(10);
+      eat(philo);
+      if (philo->state == EAT)
+        rest(philo);
+      //if (philo->state != THINK)
+      //  think(philo);
+    }
+}
+
+
 static void     *print_philo (void *phil)
 {
   t_philo	    *philo;
   int		    s;
 
   philo = (t_philo *)phil;
+  choice(phil);
   // Attendre que les nbPhilo soit là avant de continuer.
+  
   s = pthread_barrier_wait(&mutex_stock);
   pthread_mutex_lock(&mutex);
   if(s == 0) {
@@ -94,7 +116,7 @@ int			    main(int ac, char **av)
   int           c;
   int           errflg;
   int			nbPhilo;
-  int			nbChopstick;
+  int			nbEat;
   extern char   *optarg;
   extern int    optind;
 
@@ -106,7 +128,7 @@ int			    main(int ac, char **av)
     if (c == 'p')
       nbPhilo = atoi(optarg);
     else if (c == 'e')
-      nbChopstick = atoi(optarg);
+      nbEat = atoi(optarg);
     else if (c == ':')
       fprintf(stderr, "Option -%c requires an operand: %d\n", optopt, ++errflg);
     else if (c == '?')
@@ -116,8 +138,8 @@ int			    main(int ac, char **av)
     fprintf(stderr, "Usage : philo -p N -e N");
     exit(2);
   }
-  printf("%d : %d\n", nbPhilo, nbChopstick);
-  philo(nbPhilo, nbChopstick);
+  printf("%d : %d\n", nbPhilo, nbEat);
+  philo(nbPhilo, nbEat);
   RCFCleanup();
   return (0);
 }

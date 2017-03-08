@@ -14,7 +14,8 @@ VERSION		=		0.1
 
 NAME			=		philo
 
-SRCS			=		main.c
+SRCS			=		main.c \
+							action.c
 
 CC				=		gcc
 AR				=		ar
