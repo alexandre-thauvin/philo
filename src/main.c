@@ -35,8 +35,8 @@ void choice(t_philo *philo)
       eat(philo);
       if (philo->state == EAT)
         rest(philo);
-      //if (philo->state != THINK)
-      //  think(philo);
+      if (philo->state != THINK)
+        think(philo);
     }
 }
 
@@ -49,7 +49,7 @@ static void     *print_philo (void *phil)
   philo = (t_philo *)phil;
   choice(phil);
   // Attendre que les nbPhilo soit là avant de continuer.
-  
+
   s = pthread_barrier_wait(&mutex_stock);
   pthread_mutex_lock(&mutex);
   if(s == 0) {
