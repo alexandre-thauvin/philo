@@ -5,7 +5,7 @@
 ** Login   <thauvi_a@epitech.net>
 **
 ** Started on  Mon Mar  6 10:55:43 2017 Alexandre Thauvin
-** Last update Fri Mar 10 18:17:52 2017 Paul THEIS
+** Last update Fri Mar 10 18:29:13 2017 Paul THEIS
 */
 
 #include <stdio.h>
@@ -65,7 +65,7 @@ static bool			philo(int nbPhilo, int nbEat)
   }
   while (--i > 0)
     if (pthread_join(philos[i].thread, &status))
-      return (fprintf(stderr, "Error - pthread_join()\n"),false);
+      return (fprintf(stderr, "Error - pthread_join()\n"), false);
   return (true);
 }
 

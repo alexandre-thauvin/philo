@@ -5,12 +5,12 @@
 ** Login   <theis_p@epitech.eu>
 **
 ** Started on  Thu Mar  9 22:20:51 2017 Paul THEIS
-** Last update Fri Mar 10 18:27:01 2017 Paul THEIS
+** Last update Fri Mar 10 18:28:40 2017 Paul THEIS
 */
 
 #include "philo.h"
 
-void      p_eat(t_philo *philo)
+void		p_eat(t_philo *philo)
 {
   if (pthread_mutex_trylock(&philo->mutex) &&
       pthread_mutex_trylock(&philo->right->mutex))
@@ -27,7 +27,7 @@ void      p_eat(t_philo *philo)
     }
 }
 
-void      p_think(t_philo *philo)
+void		p_think(t_philo *philo)
 {
   if (pthread_mutex_trylock(&philo->mutex))
     {
@@ -47,7 +47,7 @@ void      p_think(t_philo *philo)
     }
 }
 
-void      p_sleep(t_philo *philo)
+void		p_sleep(t_philo *philo)
 {
   lphilo_sleep();
   philo->state = SLEEP;
