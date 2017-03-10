@@ -5,7 +5,7 @@
 ## Login   <theis_p@epitech.eu>
 ##
 ## Started on  Mon Mar  6 23:55:28 2017 Paul THEIS
-## Last update Mon Mar  6 23:55:30 2017 Paul THEIS
+## Last update Thu Mar  9 22:12:56 2017 Paul THEIS
 ##
 
 DEBUG			=		yes
@@ -58,14 +58,14 @@ fclean		:		clean
 re				:		fclean all
 
 val				:
-							@make re && valgrind ./$(NAME)
+							@make re && valgrind ./$(NAME) -p 10 -e 1000
 
 val+			:
-							@make re && valgrind --leak-check=full ./$(NAME)
+							@make re && valgrind --leak-check=full ./$(NAME) -p 10 -e 1000
 
 exe				:
 							export LD_LIBRARY_PATH=$(pwd)
-							@make re && LD_PRELOAD=libriceferee.so ./$(NAME) -p 7 -e 15
+							@make re && LD_PRELOAD=libriceferee.so ./$(NAME) -p 10 -e 1000
 
 .PHONY		:		all clean fclean re
 

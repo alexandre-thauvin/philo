@@ -1,64 +1,54 @@
-#include "extern.h"
+/*
+** action.c for  in /home/aneopsy/PSU_2016_philo/src/
+**
+** Made by Paul THEIS
+** Login   <theis_p@epitech.eu>
+**
+** Started on  Thu Mar  9 22:20:51 2017 Paul THEIS
+** Last update Thu Mar  9 23:54:11 2017 Paul THEIS
+*/
+
 #include "philo.h"
 
-void      eat(t_philo *philo)
+void      p_eat(t_philo *philo)
 {
   if (pthread_mutex_trylock(&philo->mutex) &&
-        pthread_mutex_trylock(&philo->right->mutex))
-      {
-        philo->chopstick = false;
-        philo->right->chopstick = false;
-        lphilo_take_chopstick(&philo->mutex);
-        lphilo_take_chopstick(&philo->right->mutex);
-        philo->state = EAT;
-        lphilo_eat();
-        philo->count -= 1;
-        lphilo_release_chopstick(&philo->mutex);
-        lphilo_release_chopstick(&philo->right->mutex);
-        pthread_mutex_unlock(&philo->mutex);
-        pthread_mutex_unlock(&philo->right->mutex);
-        philo->right->chopstick = true;
-        philo->right->chopstick = true;
+      pthread_mutex_trylock(&philo->right->mutex))
+    {
+      lphilo_take_chopstick(&philo->mutex);
+      lphilo_take_chopstick(&philo->right->mutex);
+      lphilo_eat();
+      lphilo_release_chopstick(&philo->mutex);
+      lphilo_release_chopstick(&philo->right->mutex);
+      pthread_mutex_unlock(&philo->mutex);
+      pthread_mutex_unlock(&philo->right->mutex);
+      --philo->count;
+      philo->state = EAT;
       }
 }
 
-void      think(t_philo *philo)
+void      p_think(t_philo *philo)
 {
-  //trylock
-  //chopstick false
-  // state think
-  //take
-  //think
-  //release
-  //unlock
-  //chopstick true
-  //--
-  // meme processus avec celui de droite
-  if (pthread_mutex_trylock(&philo->mutex) && philo->right->state != THINK)
+  if (pthread_mutex_trylock(&philo->mutex))
     {
-      philo->chopstick = false;
-      philo->state = THINK;
       lphilo_take_chopstick(&philo->mutex);
       lphilo_think();
       lphilo_release_chopstick(&philo->mutex);
       pthread_mutex_unlock(&philo->mutex);
-      philo->chopstick = true;
-    }
-  else if (pthread_mutex_trylock(&philo->right->mutex)
-	   && philo->right->state != THINK)
-    {
-      philo->chopstick = false;
       philo->state = THINK;
+    }
+  else if (pthread_mutex_trylock(&philo->right->mutex))
+    {
       lphilo_take_chopstick(&philo->right->mutex);
       lphilo_think();
       lphilo_release_chopstick(&philo->right->mutex);
       pthread_mutex_unlock(&philo->right->mutex);
-      philo->chopstick = true;
+      philo->state = THINK;
     }
 }
 
-void      rest(t_philo *philo)
+void      p_sleep(t_philo *philo)
 {
-  philo->state = REST;
   lphilo_sleep();
+  philo->state = SLEEP;
 }
