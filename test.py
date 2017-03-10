@@ -32,7 +32,10 @@ if __name__ == '__main__':
     cmd = "make re"
     os.system(cmd)
     print("+"+78*'-'+"+")
-    loop()
+    try:
+        loop()
+    except KeyboardInterrupt:
+        pass
     print("+"+78*'-'+"+")
     cmd = "make fclean"
     os.system(cmd)

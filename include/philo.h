@@ -5,7 +5,7 @@
 ** Login   <theis_p@epitech.eu>
 **
 ** Started on  Thu Mar  9 21:46:14 2017 Paul THEIS
-** Last update Thu Mar  9 23:48:33 2017 Paul THEIS
+** Last update Fri Mar 10 18:16:58 2017 Paul THEIS
 */
 
 #ifndef PHILO_H_
@@ -24,6 +24,7 @@ typedef struct		s_philo
 {
   pthread_t		thread;
   pthread_mutex_t	mutex;
+  pthread_barrier_t 	*barrier;
   struct s_philo	*right;
   enum STATE		state;
   bool			*flg;
