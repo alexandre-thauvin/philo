@@ -5,45 +5,58 @@
 ## Login   <theis_p@epitech.eu>
 ##
 ## Started on  Mon Mar  6 23:55:28 2017 Paul THEIS
-## Last update Thu Mar  9 22:12:56 2017 Paul THEIS
+## Last update Fri Mar 10 13:57:06 2017 Paul THEIS
 ##
 
-DEBUG			=		yes
+DEBUG			?=		yes
+COLOR			?= 		yes
+PARAM			?=		-p 10 -e 1000
 
 VERSION		=		0.1
 
 NAME			=		philo
 
+OBJDIR		=		obj
+SRCDIR		=		src
+INCLUDE		=		-I include/
+SRCDIRS		=		$(shell find $(SRCDIR) -type d | sed 's/$(SRCDIR)/./g' )
 SRCS			=		main.c \
 							action.c
+OBJS			=		$(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, \
+							$(addprefix $(SRCDIR)/, $(SRCS)))
 
-CC				=		gcc
+CC				?=		gcc
 AR				=		ar
 RM				=		rm -Rf
+MKDIR			= 	mkdir -p
+RMDIR			=		rmdir --ignore-fail-on-non-empty
+
+LVL				?=	3
 
 ifeq ($(DEBUG), yes)
-CFLAGS		=		-W -Wall -Wextra -g -pg -pedantic
+CFLAGS		=		-g -pg -pedantic
 else
-CFLAGS		=		-W -Wall -Wextra -Werror -pedantic
+CFLAGS		=		-Werror -pedantic
 endif
-CFLAGS	 	+=	-I./include
-LIB				=		libriceferee.so -lpthread
+CFLAGS	 	+=	-W -Wall -Wextra -O$(LVL)
+CFLAGS	+= $(INCLUDE)
+LIB				=		libriceferee.so -l pthread
+DFLAGS			=	-Y -w80 $(INCLUDE)
+LDFLAGS			+=	$(LIB)
 
 GREEN			=		\033[1;32m
 YELLOW		=		\033[1;33m
 BLUE			=		\033[1;34m
 WHITE			=		\033[0m
+ifneq ($(COLOR), no)
+CFLAGS			+=	-fdiagnostics-color
+endif
 
-OBJDIR		=		obj
-SRCDIR		=		src
-SRCDIRS		=		$(shell find $(SRCDIR) -type d | sed 's/$(SRCDIR)/./g' )
-OBJS			=		$(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, \
-							$(addprefix $(SRCDIR)/, $(SRCS)))
 
 name			:		buildrepo project_compil
 
 project_compil	:	$(OBJS)
-				@$(CC) $(OBJS) $(LIB) -o $(NAME) $(LDFLAGS)
+				@$(CC) $(OBJS) -o $(NAME) $(LDFLAGS)
 				@echo "$(GREEN)\n<--->\t ♩♪♫ $(NAME) $(YELLOW)" \
 				" Compiled Sucesfully $(WHITE)\n"
 
@@ -57,17 +70,22 @@ fclean		:		clean
 
 re				:		fclean all
 
+depend		:
+							makedepend $(SRC) $(DFLAGS)
+
 val				:
-							@make re && valgrind ./$(NAME) -p 10 -e 1000
+							@make re && valgrind ./$(NAME) $(PARAM)
 
 val+			:
-							@make re && valgrind --leak-check=full ./$(NAME) -p 10 -e 1000
+							@make re && valgrind --leak-check=full ./$(NAME) $(PARAM)
 
 exe				:
 							export LD_LIBRARY_PATH=$(pwd)
-							@make re && LD_PRELOAD=libriceferee.so ./$(NAME) -p 10 -e 1000
+							@make re && LD_PRELOAD=libriceferee.so ./$(NAME) $(PARAM)
 
-.PHONY		:		all clean fclean re
+.PHONY		:		all clean fclean re %.o %.s
+
+.SUFFIXES	: .o.c .s.c
 
 $(OBJDIR)/%.o	: 	$(SRCDIR)/%.c
 				@$(CC) -c $< -o $@ $(CFLAGS)

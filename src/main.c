@@ -5,7 +5,7 @@
 ** Login   <thauvi_a@epitech.net>
 **
 ** Started on  Mon Mar  6 10:55:43 2017 Alexandre Thauvin
-** Last update Thu Mar  9 23:51:46 2017 Paul THEIS
+** Last update Fri Mar 10 13:52:58 2017 Paul THEIS
 */
 
 #include <stdio.h>
@@ -78,6 +78,8 @@ int			main(int ac, char **av)
   extern char   	*optarg;
 
   RCFStartup(ac, av);
+      nbPhilo = 0;
+      nbChopstick = 0;
   while ((c = getopt(ac, av, "p:e:")) != -1)
   {
     if (c == 'p')
