@@ -19,7 +19,7 @@
 static void		p_eat(t_philo *philo)
 {
 
-  if (printf("%d - ", pthread_mutex_trylock(&philo->chopstick)) &&
+  if (pthread_mutex_trylock(&philo->chopstick) &&
       pthread_mutex_trylock(&philo->right->chopstick))
     {
       printf("debut eat ");
