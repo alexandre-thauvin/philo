@@ -5,7 +5,7 @@
 ** Login   <thauvi_a@epitech.net>
 **
 ** Started on  Mon Mar  6 10:55:43 2017 Alexandre Thauvin
-** Last update Fri Mar 17 18:29:24 2017 Paul THEIS
+** Last update Fri Mar 17 18:35:42 2017 Paul THEIS
 */
 
 #include <stdio.h>
@@ -78,6 +78,7 @@ static void			*choice(void *phil)
 	}
       if (philo->state != THINK) {
 	p_think(philo);
+    }
     }
   *philo->flg = 0x00;
   pthread_exit(philo);
