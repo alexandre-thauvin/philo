@@ -5,7 +5,7 @@
 ** Login   <thauvi_a@epitech.net>
 **
 ** Started on  Mon Mar  6 10:55:43 2017 Alexandre Thauvin
-** Last update Fri Mar 17 18:07:41 2017 Paul THEIS
+** Last update Fri Mar 17 18:11:56 2017 Paul THEIS
 */
 
 #include <stdio.h>
@@ -36,6 +36,7 @@ static void		p_eat(t_philo *philo)
 	  --philo->count;
 	  write(1, "ee\n", 3);
 	}
+      pthread_mutex_trylock(&philo->chopstick);
         pthread_mutex_unlock(&philo->chopstick);
     }
 }
