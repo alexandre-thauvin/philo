@@ -19,7 +19,6 @@
 
 static void		p_eat(t_philo *philo)
 {
-
   if (pthread_mutex_trylock(&philo->chopstick) != EBUSY)
     {
       if (pthread_mutex_trylock(&philo->right->chopstick) != EBUSY)
@@ -102,7 +101,7 @@ static bool			philo(int nbPhilo, int nbEat)
       philos[i].count = nbEat;
       philos[i].flg = &flg;
       philos[i].barrier = &barrier;
-      philos[i].right = (i == nbPhilo - 0x01) ? (&philos[0]) : (&philos[i + 1]);
+      philos[i].right = (i == nbPhilo - 1) ? (&philos[0]) : (&philos[i + 1]);
       if (pthread_create(&philos[i].thread, NULL, choice, &philos[i]))
         return (fprintf(stderr, "Error - pthread_create()\n"), false);
   }
@@ -122,7 +121,6 @@ int				main(int ac, char **av)
   RCFStartup(ac, av);
   nbPhilo = 0;
   nbChopstick = 0;
-
   while ((c = getopt(ac, av, "p:e:")) != -1)
     {
     if (c == 'p')
@@ -134,7 +132,6 @@ int				main(int ac, char **av)
     }
   if (nbChopstick <= 0x00 && nbPhilo <= 0x00)
       return (fprintf(stderr, "Usage : philo -p N -e N\n"), 1);
-
   philo(nbPhilo, nbChopstick);
   RCFCleanup();
   return (0x00);
