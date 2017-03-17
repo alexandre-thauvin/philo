@@ -5,7 +5,7 @@
 ** Login   <thauvi_a@epitech.net>
 **
 ** Started on  Mon Mar  6 10:55:43 2017 Alexandre Thauvin
-** Last update Fri Mar 17 15:39:59 2017 Alexandre Thauvin
+** Last update Fri Mar 17 17:56:19 2017 Paul THEIS
 */
 
 #include <stdio.h>
@@ -13,69 +13,51 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <errno.h>
 
 #include "philo.h"
 
 static void		p_eat(t_philo *philo)
 {
 
-  if (pthread_mutex_trylock(&philo->chopstick) &&
-      pthread_mutex_trylock(&philo->right->chopstick))
+  if (pthread_mutex_trylock(&philo->chopstick))
     {
-      printf("debut eat ");
-
-      usleep(100);
-      lphilo_take_chopstick(&philo->chopstick);
-      lphilo_take_chopstick(&philo->right->chopstick);
-      lphilo_eat();
-      philo->state = EAT;
-
-      lphilo_release_chopstick(&philo->chopstick);
-      lphilo_release_chopstick(&philo->right->chopstick);
-      //write(1, "before lock\n", 12);
-      printf("%d\n", philo->count);
-      usleep(100);
-
-
-      pthread_mutex_unlock(&philo->right->chopstick);
-
-
-      //write(1, "between lock\n", 13);
-      pthread_mutex_unlock(&philo->chopstick);
-      printf("fin eat\n");
-
-      //write(1, "afterr lock\n", 12);
-
-      --philo->count;
+      if (pthread_mutex_trylock(&philo->right->chopstick))
+	{
+	  write(1, "d\n", 2);
+	  lphilo_take_chopstick(&philo->chopstick);
+	  lphilo_take_chopstick(&philo->right->chopstick);
+	  lphilo_eat();
+	  lphilo_release_chopstick(&philo->chopstick);
+	  lphilo_release_chopstick(&philo->right->chopstick);
+	  pthread_mutex_unlock(&philo->right->chopstick);
+	  philo->state = EAT;
+	  --philo->count;
+	  write(1, "e\n", 2);
+	}
+        pthread_mutex_unlock(&philo->chopstick);
     }
 }
 
 static void		p_think(t_philo *philo)
 {
-  if (pthread_mutex_trylock(&philo->chopstick) && philo->right->state != THINK)
+  if (pthread_mutex_trylock(&philo->chopstick) != EBUSY &&
+      philo->right->state != THINK)
     {
-      //printf("debut think ");
-
-      usleep(100);
       lphilo_take_chopstick(&philo->chopstick);
       lphilo_think();
       lphilo_release_chopstick(&philo->chopstick);
       pthread_mutex_unlock(&philo->chopstick);
       philo->state = THINK;
     }
-  else if (pthread_mutex_trylock(&philo->right->chopstick))
+  else if (pthread_mutex_trylock(&philo->right->chopstick) != EBUSY)
     {
-
       lphilo_take_chopstick(&philo->right->chopstick);
       lphilo_think();
       lphilo_release_chopstick(&philo->right->chopstick);
       pthread_mutex_unlock(&philo->right->chopstick);
       philo->state = THINK;
     }
-    usleep(100);
-
-    //printf("fin think\n");
-
 }
 
 static void			*choice(void *phil)
@@ -86,20 +68,17 @@ static void			*choice(void *phil)
   pthread_barrier_wait(&(*philo->barrier));
   while (*philo->flg && philo->count > 0x00)
     {
-      usleep(100);
       p_eat(philo);
       usleep(0x0A);
       if (philo->state == EAT)
 	     {
-	       usleep(20);
 	        lphilo_sleep();
 	         philo->state = SLEEP;
 	     }
-      usleep(30);
       if (philo->state != THINK)
         p_think(philo);
     }
-  *philo->flg = 0;
+  *philo->flg = 0x00;
   pthread_exit(philo);
 }
 
@@ -121,11 +100,11 @@ static bool			philo(int nbPhilo, int nbEat)
       philos[i].count = nbEat;
       philos[i].flg = &flg;
       philos[i].barrier = &barrier;
-      philos[i].right = (i == nbPhilo - 1) ? (&philos[0]) : (&philos[i + 1]);
+      philos[i].right = (i == nbPhilo - 0x01) ? (&philos[0]) : (&philos[i + 1]);
       if (pthread_create(&philos[i].thread, NULL, choice, &philos[i]))
         return (fprintf(stderr, "Error - pthread_create()\n"), false);
   }
-  while (--i > 0)
+  while (--i > 0x00)
     if (pthread_join(philos[i].thread, &status))
       return (fprintf(stderr, "Error - pthread_join()\n"), false);
   return (true);
@@ -140,20 +119,27 @@ int				main(int ac, char **av)
 
   RCFStartup(ac, av);
   nbPhilo = 3;
-  nbChopstick = 50;
+  nbChopstick = 100;
   /*
   while ((c = getopt(ac, av, "p:e:")) != -1)
+>>>>>>> bdd33acfaa899452f7c2602bcbe065f1d74d1f9b
     {
     if (c == 'p')
       nbPhilo = atoi(optarg);
     else if (c == 'e')
       nbChopstick = atoi(optarg);
     else
+<<<<<<< HEAD
+      return (fprintf(stderr, "Usage : philo -p N -e N\n"), 0x01);
+    }
+  if (nbChopstick <= 0x00 && nbPhilo <= 0x00)
+    return (fprintf(stderr, "Usage : philo -p N -e N\n"), 0x01);
+=======
       return (fprintf(stderr, "Usage : philo -p N -e N\n"), 1);
     }*/
   if (nbChopstick <= 0 && nbPhilo <= 0)
     return (fprintf(stderr, "Usage : philo -p N -e N\n"), 1);
   philo(nbPhilo, nbChopstick);
   RCFCleanup();
-  return (0);
+  return (0x00);
 }

@@ -5,10 +5,10 @@
 ## Login   <theis_p@epitech.eu>
 ##
 ## Started on  Mon Mar  6 23:55:28 2017 Paul THEIS
-## Last update Mon Mar 13 14:54:18 2017 Paul THEIS
+## Last update Fri Mar 17 16:05:51 2017 Paul THEIS
 ##
 
-DEBUG			?=		no
+DEBUG			?=		yes
 COLOR			?= 		yes
 PARAM			?=		-p 10 -e 1000
 
