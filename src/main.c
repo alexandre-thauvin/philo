@@ -5,7 +5,7 @@
 ** Login   <thauvi_a@epitech.net>
 **
 ** Started on  Mon Mar  6 10:55:43 2017 Alexandre Thauvin
-** Last update Mon Mar 13 14:54:33 2017 Paul THEIS
+** Last update Fri Mar 17 16:08:00 2017 Paul THEIS
 */
 
 #include <stdio.h>
@@ -26,8 +26,8 @@ static void		p_eat(t_philo *philo)
       lphilo_eat();
       lphilo_release_chopstick(&philo->chopstick);
       lphilo_release_chopstick(&philo->right->chopstick);
-      pthread_mutex_unlock(&philo->right->chopstick);
       pthread_mutex_unlock(&philo->chopstick);
+      pthread_mutex_unlock(&philo->right->chopstick);
       --philo->count;
       philo->state = EAT;
     }
@@ -71,7 +71,7 @@ static void			*choice(void *phil)
       if (philo->state != THINK)
         p_think(philo);
     }
-  *philo->flg = 0;
+  *philo->flg = 0x00;
   pthread_exit(philo);
 }
 
@@ -93,11 +93,11 @@ static bool			philo(int nbPhilo, int nbEat)
       philos[i].count = nbEat;
       philos[i].flg = &flg;
       philos[i].barrier = &barrier;
-      philos[i].right = (i == nbPhilo - 1) ? (&philos[0]) : (&philos[i + 1]);
+      philos[i].right = (i == nbPhilo - 0x01) ? (&philos[0]) : (&philos[i + 1]);
       if (pthread_create(&philos[i].thread, NULL, choice, &philos[i]))
         return (fprintf(stderr, "Error - pthread_create()\n"), false);
   }
-  while (--i > 0)
+  while (--i > 0x00)
     if (pthread_join(philos[i].thread, &status))
       return (fprintf(stderr, "Error - pthread_join()\n"), false);
   return (true);
@@ -111,20 +111,20 @@ int				main(int ac, char **av)
   extern char			*optarg;
 
   RCFStartup(ac, av);
-  nbPhilo = 0;
-  nbChopstick = 0;
-  while ((c = getopt(ac, av, "p:e:")) != -1)
+  nbPhilo = 0x00;
+  nbChopstick = 0x00;
+  while ((c = getopt(ac, av, "p:e:")) != -0x01)
     {
     if (c == 'p')
       nbPhilo = atoi(optarg);
     else if (c == 'e')
       nbChopstick = atoi(optarg);
     else
-      return (fprintf(stderr, "Usage : philo -p N -e N\n"), 1);
+      return (fprintf(stderr, "Usage : philo -p N -e N\n"), 0x01);
     }
-  if (nbChopstick <= 0 && nbPhilo <= 0)
-    return (fprintf(stderr, "Usage : philo -p N -e N\n"), 1);
+  if (nbChopstick <= 0x00 && nbPhilo <= 0x00)
+    return (fprintf(stderr, "Usage : philo -p N -e N\n"), 0x01);
   philo(nbPhilo, nbChopstick);
   RCFCleanup();
-  return (0);
+  return (0x00);
 }
