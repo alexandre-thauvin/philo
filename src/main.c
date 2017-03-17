@@ -5,7 +5,7 @@
 ** Login   <thauvi_a@epitech.net>
 **
 ** Started on  Mon Mar  6 10:55:43 2017 Alexandre Thauvin
-** Last update Fri Mar 17 17:56:19 2017 Paul THEIS
+** Last update Fri Mar 17 18:07:41 2017 Paul THEIS
 */
 
 #include <stdio.h>
@@ -24,16 +24,17 @@ static void		p_eat(t_philo *philo)
     {
       if (pthread_mutex_trylock(&philo->right->chopstick))
 	{
-	  write(1, "d\n", 2);
+	  write(1, "ed\n", 3);
 	  lphilo_take_chopstick(&philo->chopstick);
 	  lphilo_take_chopstick(&philo->right->chopstick);
 	  lphilo_eat();
 	  lphilo_release_chopstick(&philo->chopstick);
 	  lphilo_release_chopstick(&philo->right->chopstick);
+	  pthread_mutex_trylock(&philo->chopstick);
 	  pthread_mutex_unlock(&philo->right->chopstick);
 	  philo->state = EAT;
 	  --philo->count;
-	  write(1, "e\n", 2);
+	  write(1, "ee\n", 3);
 	}
         pthread_mutex_unlock(&philo->chopstick);
     }
@@ -41,22 +42,28 @@ static void		p_eat(t_philo *philo)
 
 static void		p_think(t_philo *philo)
 {
-  if (pthread_mutex_trylock(&philo->chopstick) != EBUSY &&
+  if (pthread_mutex_trylock(&philo->chopstick) &&
       philo->right->state != THINK)
     {
+      write(1, "td\n", 3);
       lphilo_take_chopstick(&philo->chopstick);
       lphilo_think();
       lphilo_release_chopstick(&philo->chopstick);
+      pthread_mutex_trylock(&philo->chopstick);
       pthread_mutex_unlock(&philo->chopstick);
       philo->state = THINK;
+      write(1, "te\n", 3);
     }
-  else if (pthread_mutex_trylock(&philo->right->chopstick) != EBUSY)
+  else if (pthread_mutex_trylock(&philo->right->chopstick))
     {
+      write(1, "td\n", 3);
       lphilo_take_chopstick(&philo->right->chopstick);
       lphilo_think();
       lphilo_release_chopstick(&philo->right->chopstick);
+      pthread_mutex_trylock(&philo->right->chopstick);
       pthread_mutex_unlock(&philo->right->chopstick);
       philo->state = THINK;
+      write(1, "te\n", 3);
     }
 }
 
@@ -68,15 +75,16 @@ static void			*choice(void *phil)
   pthread_barrier_wait(&(*philo->barrier));
   while (*philo->flg && philo->count > 0x00)
     {
+      write(1, "-\n", 2);
       p_eat(philo);
       usleep(0x0A);
       if (philo->state == EAT)
-	     {
-	        lphilo_sleep();
-	         philo->state = SLEEP;
-	     }
+	{
+	  lphilo_sleep();
+	  philo->state = SLEEP;
+	}
       if (philo->state != THINK)
-        p_think(philo);
+	p_think(philo);
     }
   *philo->flg = 0x00;
   pthread_exit(philo);
