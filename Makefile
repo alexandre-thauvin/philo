@@ -8,7 +8,7 @@
 ## Last update Mon Mar 13 14:54:18 2017 Paul THEIS
 ##
 
-DEBUG			?=		yes
+DEBUG			?=		no
 COLOR			?= 		yes
 PARAM			?=		-p 10 -e 1000
 

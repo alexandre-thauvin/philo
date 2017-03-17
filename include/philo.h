@@ -31,8 +31,4 @@ typedef struct		s_philo
   int			count;
 }			t_philo;
 
-void		 	p_eat(t_philo *);
-void 			p_sleep(t_philo *);
-void 			p_think(t_philo *);
-
 #endif /* !PHILO_H_ */
