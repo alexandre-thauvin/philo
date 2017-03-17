@@ -5,7 +5,7 @@
 ** Login   <thauvi_a@epitech.net>
 **
 ** Started on  Mon Mar  6 10:55:43 2017 Alexandre Thauvin
-** Last update Fri Mar 17 18:15:59 2017 Paul THEIS
+** Last update Fri Mar 17 18:29:24 2017 Paul THEIS
 */
 
 #include <stdio.h>
@@ -20,9 +20,9 @@
 static void		p_eat(t_philo *philo)
 {
 
-  if (pthread_mutex_trylock(&philo->chopstick) == 0)
+  if (pthread_mutex_trylock(&philo->chopstick) != EBUSY)
     {
-      if (pthread_mutex_trylock(&philo->right->chopstick) == 0)
+      if (pthread_mutex_trylock(&philo->right->chopstick) != EBUSY)
 	{
 	  write(1, "ed\n", 3);
 	  lphilo_take_chopstick(&philo->chopstick);
@@ -37,14 +37,13 @@ static void		p_eat(t_philo *philo)
 	  write(1, "ee\n", 3);
 	}
       pthread_mutex_trylock(&philo->chopstick);
-        pthread_mutex_unlock(&philo->chopstick);
+      pthread_mutex_unlock(&philo->chopstick);
     }
 }
 
 static void		p_think(t_philo *philo)
 {
-  if (pthread_mutex_trylock(&philo->chopstick) &&
-      philo->right->state != THINK)
+  if (pthread_mutex_trylock(&philo->chopstick) != EBUSY)
     {
       write(1, "td\n", 3);
       lphilo_take_chopstick(&philo->chopstick);
@@ -55,7 +54,7 @@ static void		p_think(t_philo *philo)
       philo->state = THINK;
       write(1, "te\n", 3);
     }
-  else if (pthread_mutex_trylock(&philo->right->chopstick))
+  else if (pthread_mutex_trylock(&philo->right->chopstick) != EBUSY)
     {
       write(1, "td\n", 3);
       lphilo_take_chopstick(&philo->right->chopstick);
@@ -81,11 +80,13 @@ static void			*choice(void *phil)
       usleep(0x0A);
       if (philo->state == EAT)
 	{
+	  write(1, "s\n", 2);
 	  lphilo_sleep();
 	  philo->state = SLEEP;
 	}
-      if (philo->state != THINK)
+      if (philo->state != THINK) {
 	p_think(philo);
+      write(1, "t\n", 2);}
     }
   *philo->flg = 0x00;
   pthread_exit(philo);
