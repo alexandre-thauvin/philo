@@ -5,7 +5,7 @@
 ** Login   <theis_p@epitech.eu>
 **
 ** Started on  Thu Mar  9 21:46:14 2017 Paul THEIS
-** Last update Mon Mar 13 14:36:55 2017 Paul THEIS
+** Last update Fri Mar 17 14:07:58 2017 Alexandre Thauvin
 */
 
 #ifndef PHILO_H_
@@ -30,9 +30,5 @@ typedef struct		s_philo
   bool			*flg;
   int			count;
 }			t_philo;
-
-void		 	p_eat(t_philo *);
-void 			p_sleep(t_philo *);
-void 			p_think(t_philo *);
 
 #endif /* !PHILO_H_ */
