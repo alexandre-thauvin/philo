@@ -5,7 +5,7 @@
 ## Login   <theis_p@epitech.eu>
 ##
 ## Started on  Mon Mar  6 23:55:28 2017 Paul THEIS
-## Last update Fri Mar 10 13:58:32 2017 Paul THEIS
+## Last update Mon Mar 13 14:54:18 2017 Paul THEIS
 ##
 
 DEBUG			?=		yes
@@ -20,8 +20,7 @@ OBJDIR		=		obj
 SRCDIR		=		src
 INCLUDE		=		-I include/
 SRCDIRS		=		$(shell find $(SRCDIR) -type d | sed 's/$(SRCDIR)/./g' )
-SRCS			=		main.c \
-							action.c
+SRCS			=		main.c
 OBJS			=		$(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, \
 							$(addprefix $(SRCDIR)/, $(SRCS)))
 

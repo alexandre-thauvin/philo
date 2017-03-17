@@ -5,7 +5,7 @@
 ** Login   <thauvi_a@epitech.net>
 **
 ** Started on  Mon Mar  6 10:55:43 2017 Alexandre Thauvin
-** Last update Fri Mar 10 18:29:13 2017 Paul THEIS
+** Last update Mon Mar 13 14:54:33 2017 Paul THEIS
 */
 
 #include <stdio.h>
@@ -16,29 +16,63 @@
 
 #include "philo.h"
 
-static bool			choice(t_philo *philo)
+static void		p_eat(t_philo *philo)
 {
-  while (*philo->flg && philo->count > 0x00)
+  if (pthread_mutex_trylock(&philo->chopstick) &&
+      pthread_mutex_trylock(&philo->right->chopstick))
     {
-      p_eat(philo);
-      usleep(10);
-      if (philo->state == EAT)
-        p_sleep(philo);
-      if (philo->state != THINK)
-        p_think(philo);
+      lphilo_take_chopstick(&philo->chopstick);
+      lphilo_take_chopstick(&philo->right->chopstick);
+      lphilo_eat();
+      lphilo_release_chopstick(&philo->chopstick);
+      lphilo_release_chopstick(&philo->right->chopstick);
+      pthread_mutex_unlock(&philo->right->chopstick);
+      pthread_mutex_unlock(&philo->chopstick);
+      --philo->count;
+      philo->state = EAT;
     }
-  return (!(*philo->flg = false));
 }
 
-static void			*print_philo (void *phil)
+static void		p_think(t_philo *philo)
+{
+  if (pthread_mutex_trylock(&philo->chopstick))
+    {
+      lphilo_take_chopstick(&philo->chopstick);
+      lphilo_think();
+      lphilo_release_chopstick(&philo->chopstick);
+      pthread_mutex_unlock(&philo->chopstick);
+      philo->state = THINK;
+    }
+  else if (pthread_mutex_trylock(&philo->right->chopstick))
+    {
+      lphilo_take_chopstick(&philo->right->chopstick);
+      lphilo_think();
+      lphilo_release_chopstick(&philo->right->chopstick);
+      pthread_mutex_unlock(&philo->right->chopstick);
+      philo->state = THINK;
+    }
+}
+
+static void			*choice(void *phil)
 {
   t_philo			*philo;
 
   philo = (t_philo *)phil;
   pthread_barrier_wait(&(*philo->barrier));
-  if (choice(philo))
-    return (pthread_exit(philo), NULL);
-  return (NULL);
+  while (*philo->flg && philo->count > 0x00)
+    {
+      p_eat(philo);
+      usleep(0x0A);
+      if (philo->state == EAT)
+	{
+	  lphilo_sleep();
+	  philo->state = SLEEP;
+	}
+      if (philo->state != THINK)
+        p_think(philo);
+    }
+  *philo->flg = 0;
+  pthread_exit(philo);
 }
 
 static bool			philo(int nbPhilo, int nbEat)
@@ -49,18 +83,18 @@ static bool			philo(int nbPhilo, int nbEat)
   t_philo			philos[nbPhilo];
   pthread_barrier_t		barrier;
 
-  i = -1;
+  i = -0x01;
   flg = true;
   pthread_barrier_init(&barrier, NULL, nbPhilo);
   while (++i < nbPhilo)
     {
-      pthread_mutex_init(&philos[i].mutex, NULL);
+      pthread_mutex_init(&philos[i].chopstick, NULL);
       philos[i].state = SLEEP;
       philos[i].count = nbEat;
       philos[i].flg = &flg;
       philos[i].barrier = &barrier;
       philos[i].right = (i == nbPhilo - 1) ? (&philos[0]) : (&philos[i + 1]);
-      if (pthread_create(&philos[i].thread, NULL, print_philo, &philos[i]))
+      if (pthread_create(&philos[i].thread, NULL, choice, &philos[i]))
         return (fprintf(stderr, "Error - pthread_create()\n"), false);
   }
   while (--i > 0)
