@@ -5,7 +5,7 @@
 ** Login   <thauvi_a@epitech.net>
 **
 ** Started on  Mon Mar  6 10:55:43 2017 Alexandre Thauvin
-** Last update Fri Mar 17 17:56:19 2017 Paul THEIS
+** Last update Fri Mar 17 17:58:53 2017 Paul THEIS
 */
 
 #include <stdio.h>
@@ -20,9 +20,9 @@
 static void		p_eat(t_philo *philo)
 {
 
-  if (pthread_mutex_trylock(&philo->chopstick))
+  if (pthread_mutex_trylock(&philo->chopstick) == 0)
     {
-      if (pthread_mutex_trylock(&philo->right->chopstick))
+      if (pthread_mutex_trylock(&philo->right->chopstick) == 0)
 	{
 	  write(1, "d\n", 2);
 	  lphilo_take_chopstick(&philo->chopstick);
@@ -41,7 +41,7 @@ static void		p_eat(t_philo *philo)
 
 static void		p_think(t_philo *philo)
 {
-  if (pthread_mutex_trylock(&philo->chopstick) != EBUSY &&
+  if (pthread_mutex_trylock(&philo->chopstick) &&
       philo->right->state != THINK)
     {
       lphilo_take_chopstick(&philo->chopstick);
@@ -50,7 +50,7 @@ static void		p_think(t_philo *philo)
       pthread_mutex_unlock(&philo->chopstick);
       philo->state = THINK;
     }
-  else if (pthread_mutex_trylock(&philo->right->chopstick) != EBUSY)
+  else if (pthread_mutex_trylock(&philo->right->chopstick))
     {
       lphilo_take_chopstick(&philo->right->chopstick);
       lphilo_think();
